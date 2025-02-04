@@ -4,21 +4,17 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 def initialize_centroids(X: np.ndarray, k: int) -> np.ndarray:
-    """Randomly initializes k centroids from the dataset."""
     idx = np.random.choice(len(X), k, replace=False)
     return X[idx]
 
 def assign_clusters(X: np.ndarray, centroids: np.ndarray) -> np.ndarray:
-    """Assigns each point to the nearest centroid."""
     distances = np.sqrt(((X - centroids[:, np.newaxis])**2).sum(axis=2))
     return np.argmin(distances, axis=0)
 
 def update_centroids(X: np.ndarray, labels: np.ndarray, k: int) -> np.ndarray:
-    """Recomputes centroids as the mean of assigned points."""
     return np.array([X[labels == i].mean(axis=0) if np.any(labels == i) else np.random.rand(3) * 255 for i in range(k)])
 
 def kmeans_clustering(X: np.ndarray, k: int, max_iters: int = 100) -> np.ndarray:
-    """Performs K-Means clustering on pixel data."""
     centroids = initialize_centroids(X, k)
     for _ in range(max_iters):
         labels = assign_clusters(X, centroids)
@@ -29,7 +25,6 @@ def kmeans_clustering(X: np.ndarray, k: int, max_iters: int = 100) -> np.ndarray
     return labels.reshape(X.shape[0]), centroids
 
 def visualize_3d_clustering(img_path: str, sample_size: int = 1000, k: int = 2):
-    """Visualizes K-Means clustering in 3D RGB space."""
     img = cv2.imread(img_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     pixels = img.reshape(-1, 3)
@@ -62,7 +57,6 @@ def visualize_3d_clustering(img_path: str, sample_size: int = 1000, k: int = 2):
     plt.show()
 
 def detect_skin(image_path: str, k: int = 2) -> np.ndarray:
-    """Detects skin by clustering and selecting the brightest cluster."""
     img = cv2.imread(image_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     pixels = img.reshape(-1, 3)
@@ -78,7 +72,6 @@ def detect_skin(image_path: str, k: int = 2) -> np.ndarray:
     return (segmented == skin_cluster_idx).astype(np.uint8)
 
 def visualize_results(img_path: str):
-    """Displays original image, skin mask, and detected skin."""
     skin_mask = detect_skin(img_path)
     
     img = cv2.imread(img_path)
